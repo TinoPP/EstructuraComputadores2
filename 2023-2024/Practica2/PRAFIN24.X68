@@ -25,6 +25,11 @@ FETCH:
 	    ;*** y dejar listo el EPC para que apunte a la siguiente instruccion
 	
 	        ; ESCRIBID VUESTRO CODIGO AQUI	    
+	        
+	        MOVE.W EPC,D0
+	        MOVEA.W D0,A0
+	        MOVE.W EMEM(A0),EIR
+	        ADDQ.W #2,EPC
         
     ;--- FFETCH: FIN FETCH
     
@@ -36,6 +41,10 @@ FETCH:
         ;*** almacenando el resultado de la decodificacion en D1
 
     	    ; ESCRIBID VUESTRO CODIGO AQUI    	    
+    	    
+    	    MOVE.W EIR,-(SP)
+    	    JSR DECOD
+    	    MOVE.W (SP)+,D1
         
     ;--- FBRDECOD: FIN SALTO A DECOD
     
