@@ -1,6 +1,7 @@
 *-----------------------------------------------------------
 * Title      : PRAFIN24
-* Written by : <nombres completos de los autores>
+* Written by : Constantino Perez Palacios
+*              Ivan 
 * Date       : 26/05/2024
 * Description: Emulador de la SUIBC
 *-----------------------------------------------------------
@@ -42,8 +43,10 @@ FETCH:
 
     	    ; ESCRIBID VUESTRO CODIGO AQUI    	    
     	    
-    	    MOVE.W EIR,-(SP)
+    	    MOVE.W #0,-(SP)
+            MOVE.W EIR,-(SP)
     	    JSR DECOD
+    	    ADDQ.W #2,SP
     	    MOVE.W (SP)+,D1
         
     ;--- FBRDECOD: FIN SALTO A DECOD
@@ -91,6 +94,8 @@ EJMZ:
 EJMN:
 EJMI:
 EHLT:
+
+        BRA FETCH
     ;--- FEXEC: FIN EJECUCION
     
     
@@ -112,6 +117,8 @@ EHLT:
 DECOD:
 	        ; ESCRIBID VUESTRO CODIGO AQUI
 	        
+	        MOVE.W D0,-(SP)
+	        MOVE.W 6(SP),D0
 	        BTST #15,D0             ;X     
             BNE ETQ1
             BTST #14,D0             ;0X
@@ -120,7 +127,7 @@ DECOD:
             BNE ETQ3
             BTST #12,D0             ;000X
             BNE ETQ4
-            MOVE.W #9,              ;0000
+            MOVE.W #9,8(SP)         ;0000
             BRA FDECOD
 ETQ2:
             BTST #13,D0             ;01X
@@ -131,48 +138,50 @@ ETQ2:
             BNE ETQ10
             BTST #10,D0             ;01000X
             BNE ETQ12
-            MOVE.W #2,              ;010000
+            MOVE.W #2,8(SP)         ;010000
             BRA FDECOD
 ETQ12:
-            MOVE.W #3,              ;010001
+            MOVE.W #3,8(SP)         ;010001
             BRA FDECOD
 ETQ10:
             BTST #10,D0             ;01001X
             BNE ETQ11
-            MOVE.W #4,              ;010010
+            MOVE.W #4,8(SP)         ;010010
             BRA FDECOD
 ETQ11:
-            MOVE.W #5,              ;010011
+            MOVE.W #5,8(SP)         ;010011
             BRA FDECOD
 ETQ9:
-            MOVE.W #6,              ;0101
+            MOVE.W #6,8(SP)         ;0101
             BRA FDECOD
 ETQ7:
             BTST #12,D0             ;011X
             BNE ETQ8
-            MOVE.W #7,              ;0110
+            MOVE.W #7,8(SP)         ;0110
             BRA FDECOD
 ETQ8:
-            MOVE.W #8,              ;0111
+            MOVE.W #8,8(SP)         ;0111
             BRA FDECOD            
 ETQ1:
             BTST #14,D0             ;1X
             BNE ETQ5
             BTST #13,D0             ;10X
             BNE ETQ6
-            MOVE.W #0,              ;100
+            MOVE.W #0,8(SP)         ;100
+            BRA FDECOD
 ETQ6:
-            MOVE.W #1               ;101
+            MOVE.W #1,8(SP)         ;101
             BRA FDECOD
 ETQ5:
-            MOVE.W #12,             ;11
+            MOVE.W #12,8(SP)        ;11
             BRA FDECOD
 ETQ3:
-            MOVE.W #11,             ;0010
+            MOVE.W #11,8(SP)        ;0010
             BRA FDECOD
 ETQ4:
-            MOVE.W #10,             ;0001
+            MOVE.W #10,8(SP)        ;0001
 FDECOD:
+            MOVE.W (SP)+,D0
 	        RTS
 
     ;--- FDECOD: FIN DECOD
