@@ -124,9 +124,37 @@ DECOD:
             BRA FDECOD
 ETQ2:
             BTST #13,D0             ;01X
-            
-            
-            
+            BNE ETQ7
+            BTST #12,D0             ;010X
+            BNE ETQ9
+            BTST #11,D0             ;0100X
+            BNE ETQ10
+            BTST #10,D0             ;01000X
+            BNE ETQ12
+            MOVE.W #2,              ;010000
+            BRA FDECOD
+ETQ12:
+            MOVE.W #3,              ;010001
+            BRA FDECOD
+ETQ10:
+            BTST #10,D0             ;01001X
+            BNE ETQ11
+            MOVE.W #4,              ;010010
+            BRA FDECOD
+ETQ11:
+            MOVE.W #5,              ;010011
+            BRA FDECOD
+ETQ9:
+            MOVE.W #6,              ;0101
+            BRA FDECOD
+ETQ7:
+            BTST #12,D0             ;011X
+            BNE ETQ8
+            MOVE.W #7,              ;0110
+            BRA FDECOD
+ETQ8:
+            MOVE.W #8,              ;0111
+            BRA FDECOD            
 ETQ1:
             BTST #14,D0             ;1X
             BNE ETQ5
@@ -157,6 +185,7 @@ FDECOD:
     ;Obtener "c"
     ;Obtener "m" dos opciones
     ;Obtener "j" dos opciones
+
 
 *~Font name~Courier New~
 *~Font size~10~
