@@ -5,7 +5,7 @@
 * Date       : 26/05/2024
 * Description: Emulador de la SUIBC
 *-----------------------------------------------------------
-    ORG $1000
+        ORG $1000
 EMEM:   DC.W $A00C,$00A0,$7002,$5000,$A80D,$00A0,$4420,$63FD
         DC.W $00A0,$2060,$800E,$C000,$0003,$0004,$0000
 EIR:    DC.W 0 ;eregistro de instruccion
