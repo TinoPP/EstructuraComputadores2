@@ -111,6 +111,41 @@ EHLT:
         ;*** especificada en el enunciado
 DECOD:
 	        ; ESCRIBID VUESTRO CODIGO AQUI
+	        
+	        BTST #15,D0             ;X     
+            BNE ETQ1
+            BTST #14,D0             ;0X
+            BNE ETQ2
+            BTST #13,D0             ;00X
+            BNE ETQ3
+            BTST #12,D0             ;000X
+            BNE ETQ4
+            MOVE.W #9,              ;0000
+            BRA FDECOD
+ETQ2:
+            BTST #13,D0             ;01X
+            
+            
+            
+ETQ1:
+            BTST #14,D0             ;1X
+            BNE ETQ5
+            BTST #13,D0             ;10X
+            BNE ETQ6
+            MOVE.W #0,              ;100
+ETQ6:
+            MOVE.W #1               ;101
+            BRA FDECOD
+ETQ5:
+            MOVE.W #12,             ;11
+            BRA FDECOD
+ETQ3:
+            MOVE.W #11,             ;0010
+            BRA FDECOD
+ETQ4:
+            MOVE.W #10,             ;0001
+FDECOD:
+	        RTS
 
     ;--- FDECOD: FIN DECOD
     END    START
@@ -122,6 +157,7 @@ DECOD:
     ;Obtener "c"
     ;Obtener "m" dos opciones
     ;Obtener "j" dos opciones
+
 *~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~
