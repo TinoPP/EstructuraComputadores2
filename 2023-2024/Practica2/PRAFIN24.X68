@@ -105,6 +105,16 @@ EHLT:
         ;*** SALVO DECOD, que va en la siguiente seccion
 
 	        ; ESCRIBID VUESTRO CODIGO AQUI
+	        
+            ;Obtener "a"
+            ;Obtener "b"
+            ;Obtener "c"
+            ;Obtener "m" dos opciones
+            ;Obtener "j" dos opciones
+	        
+	        
+	        
+	        
         
     ;--- FSUBR: FIN SUBRUTINAS
     
@@ -189,13 +199,6 @@ FDECOD:
     
     
     
-    ;Obtener "a"
-    ;Obtener "b"
-    ;Obtener "c"
-    ;Obtener "m" dos opciones
-    ;Obtener "j" dos opciones
-
-
 *~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~
