@@ -1,6 +1,6 @@
 0000102C Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 23/04/2024 20:57:13
+Created On: 07/05/2024 1:33:00
 
 00000000                             1  *-----------------------------------------------------------
 00000000                             2  * Title      : PRAFIN24
@@ -9,8 +9,8 @@ Created On: 23/04/2024 20:57:13
 00000000                             5  * Date       : 26/05/2024
 00000000                             6  * Description: Emulador de la SUIBC
 00000000                             7  *-----------------------------------------------------------
-00001000                             8      ORG $1000
-00001000= 800E 00A0 7002 5...        9  EMEM:   DC.W $800E,$00A0,$7002,$5000,$A80D,$00A0,$4420,$63FD
+00001000                             8          ORG $1000
+00001000= A00C 00A0 7002 5...        9  EMEM:   DC.W $A00C,$00A0,$7002,$5000,$A80D,$00A0,$4420,$63FD
 00001010= 00A0 2060 800E C...       10          DC.W $00A0,$2060,$800E,$C000,$0003,$0004,$0000
 0000101E= 0000                      11  EIR:    DC.W 0 ;eregistro de instruccion
 00001020= 0000                      12  EPC:    DC.W 0 ;econtador de programa
@@ -49,7 +49,7 @@ Created On: 23/04/2024 20:57:13
 00001040                            45              
 00001040  3F3C 0000                 46              MOVE.W #0,-(SP)
 00001044  3F38 101E                 47              MOVE.W EIR,-(SP)
-00001048  4EB9 000010AC             48              JSR DECOD
+00001048  4EB9 00001176             48              JSR DECOD
 0000104E  544F                      49              ADDQ.W #2,SP
 00001050  321F                      50              MOVE.W (SP)+,D1
 00001052                            51          
@@ -109,87 +109,197 @@ Created On: 23/04/2024 20:57:13
 000010AC                           105          ;*** SALVO DECOD, que va en la siguiente seccion
 000010AC                           106  
 000010AC                           107              ; ESCRIBID VUESTRO CODIGO AQUI
-000010AC                           108          
-000010AC                           109      ;--- FSUBR: FIN SUBRUTINAS
-000010AC                           110      
-000010AC                           111      
-000010AC                           112  
-000010AC                           113      ;--- IDECOD: INICIO DECOD
-000010AC                           114          ;*** Tras la etiqueta DECOD, debeis implementar la subrutina de 
-000010AC                           115          ;*** decodificacion, que debera ser de libreria, siguiendo la interfaz
-000010AC                           116          ;*** especificada en el enunciado
-000010AC                           117  DECOD:
-000010AC                           118              ; ESCRIBID VUESTRO CODIGO AQUI
-000010AC                           119              
-000010AC  3F00                     120              MOVE.W D0,-(SP)
-000010AE  302F 0006                121              MOVE.W 6(SP),D0
-000010B2  0800 000F                122              BTST #15,D0             ;X     
-000010B6  6600 009A                123              BNE ETQ1
-000010BA  0800 000E                124              BTST #14,D0             ;0X
-000010BE  6600 001C                125              BNE ETQ2
-000010C2  0800 000D                126              BTST #13,D0             ;00X
-000010C6  6600 00B8                127              BNE ETQ3
-000010CA  0800 000C                128              BTST #12,D0             ;000X
-000010CE  6600 00BA                129              BNE ETQ4
-000010D2  3F7C 0009 0008           130              MOVE.W #9,8(SP)         ;0000
-000010D8  6000 00B6                131              BRA FDECOD
-000010DC                           132  ETQ2:
-000010DC  0800 000D                133              BTST #13,D0             ;01X
-000010E0  6600 0054                134              BNE ETQ7
-000010E4  0800 000C                135              BTST #12,D0             ;010X
-000010E8  6600 0042                136              BNE ETQ9
-000010EC  0800 000B                137              BTST #11,D0             ;0100X
-000010F0  6600 001E                138              BNE ETQ10
-000010F4  0800 000A                139              BTST #10,D0             ;01000X
-000010F8  6600 000C                140              BNE ETQ12
-000010FC  3F7C 0002 0008           141              MOVE.W #2,8(SP)         ;010000
-00001102  6000 008C                142              BRA FDECOD
-00001106                           143  ETQ12:
-00001106  3F7C 0003 0008           144              MOVE.W #3,8(SP)         ;010001
-0000110C  6000 0082                145              BRA FDECOD
-00001110                           146  ETQ10:
-00001110  0800 000A                147              BTST #10,D0             ;01001X
-00001114  6600 000C                148              BNE ETQ11
-00001118  3F7C 0004 0008           149              MOVE.W #4,8(SP)         ;010010
-0000111E  6000 0070                150              BRA FDECOD
-00001122                           151  ETQ11:
-00001122  3F7C 0005 0008           152              MOVE.W #5,8(SP)         ;010011
-00001128  6000 0066                153              BRA FDECOD
-0000112C                           154  ETQ9:
-0000112C  3F7C 0006 0008           155              MOVE.W #6,8(SP)         ;0101
-00001132  6000 005C                156              BRA FDECOD
-00001136                           157  ETQ7:
-00001136  0800 000C                158              BTST #12,D0             ;011X
-0000113A  6600 000C                159              BNE ETQ8
-0000113E  3F7C 0007 0008           160              MOVE.W #7,8(SP)         ;0110
-00001144  6000 004A                161              BRA FDECOD
-00001148                           162  ETQ8:
-00001148  3F7C 0008 0008           163              MOVE.W #8,8(SP)         ;0111
-0000114E  6000 0040                164              BRA FDECOD            
-00001152                           165  ETQ1:
-00001152  0800 000E                166              BTST #14,D0             ;1X
-00001156  6600 001E                167              BNE ETQ5
-0000115A  0800 000D                168              BTST #13,D0             ;10X
-0000115E  6600 000C                169              BNE ETQ6
-00001162  3F7C 0000 0008           170              MOVE.W #0,8(SP)         ;100
-00001168  6000 0026                171              BRA FDECOD
-0000116C                           172  ETQ6:
-0000116C  3F7C 0001 0008           173              MOVE.W #1,8(SP)         ;101
-00001172  6000 001C                174              BRA FDECOD
-00001176                           175  ETQ5:
-00001176  3F7C 000C 0008           176              MOVE.W #12,8(SP)        ;11
-0000117C  6000 0012                177              BRA FDECOD
-00001180                           178  ETQ3:
-00001180  3F7C 000B 0008           179              MOVE.W #11,8(SP)        ;0010
-00001186  6000 0008                180              BRA FDECOD
-0000118A                           181  ETQ4:
-0000118A  3F7C 000A 0008           182              MOVE.W #10,8(SP)        ;0001
-00001190                           183  FDECOD:
-00001190  301F                     184              MOVE.W (SP)+,D0
-00001192  4E75                     185              RTS
-00001194                           186  
-00001194                           187      ;--- FDECOD: FIN DECOD
-00001194                           188      END    START
+000010AC                           108              
+000010AC                           109              ;Obtener "a"
+000010AC                           110              ;Obtener "b"
+000010AC                           111              ;Obtener "c"
+000010AC                           112              ;Obtener "m" dos opciones
+000010AC                           113              ;Obtener "j" dos opciones
+000010AC                           114              
+000010AC                           115  REGISTRO_A:
+000010AC                           116              
+000010AC  3038 101E                117              MOVE.W EIR,D0
+000010B0  0800 0005                118              BTST #5,D0
+000010B4  6600 001A                119              BNE RA2
+000010B8  0800 0004                120              BTST #4,D0
+000010BC  6600 000A                121              BNE RA1
+000010C0  41F8 1022                122              LEA.L ER0,A0
+000010C4  6000 001E                123              BRA FIN_A
+000010C8                           124  RA1:
+000010C8  41F8 1024                125              LEA.L ER1,A0
+000010CC  6000 0016                126              BRA FIN_A
+000010D0                           127  RA2:
+000010D0  0800 0004                128              BTST #4,D0
+000010D4  6600 000A                129              BNE RA3
+000010D8  41F8 1026                130              LEA.L ER2,A0
+000010DC  6000 0006                131              BRA FIN_A
+000010E0                           132  RA3:
+000010E0  41F8 1028                133              LEA.L ER3,A0
+000010E4                           134  FIN_A:
+000010E4  4E75                     135              RTS
+000010E6                           136                          
+000010E6                           137              
+000010E6                           138  REGISTRO_B:
+000010E6                           139                          
+000010E6  3038 101E                140              MOVE.W EIR,D0
+000010EA  0800 0005                141              BTST #5,D0
+000010EE  6600 001A                142              BNE RB2
+000010F2  0800 0004                143              BTST #4,D0
+000010F6  6600 000A                144              BNE RB1
+000010FA  41F8 1022                145              LEA.L ER0,A0
+000010FE  6000 001E                146              BRA FIN_B
+00001102                           147  RB1:
+00001102  41F8 1024                148              LEA.L ER1,A0
+00001106  6000 0016                149              BRA FIN_B
+0000110A                           150  RB2:
+0000110A  0800 0004                151              BTST #4,D0
+0000110E  6600 000A                152              BNE RB3
+00001112  41F8 1026                153              LEA.L ER2,A0
+00001116  6000 0006                154              BRA FIN_B
+0000111A                           155  RB3:
+0000111A  41F8 1028                156              LEA.L ER3,A0
+0000111E                           157  FIN_B:
+0000111E  4E75                     158              RTS
+00001120                           159              
+00001120                           160              
+00001120                           161  REGISTRO_JMEM:
+00001120                           162              
+00001120  3038 101E                163              MOVE.W EIR,D0
+00001124  0800 000B                164              BTST #11,D0
+00001128  6600 000A                165              BNE RJMEM1
+0000112C  41F8 1022                166              LEA.L ER0,A0
+00001130  6000 0006                167              BRA FIN_JMEM
+00001134                           168  RJMEM1:
+00001134  41F8 1024                169              LEA.L ER1,A0
+00001138                           170  FIN_JMEM:
+00001138  4E75                     171              RTS
+0000113A                           172              
+0000113A                           173              
+0000113A                           174  REGISTRO_JOP:
+0000113A                           175              
+0000113A  3038 101E                176              MOVE.W EIR,D0
+0000113E  0800 000B                177              BTST #11,D0
+00001142  6600 000A                178              BNE RJOP1
+00001146  41F8 1022                179              LEA.L ER0,A0
+0000114A  6000 0006                180              BRA FIN_JOP
+0000114E                           181  RJOP1:
+0000114E  41F8 1024                182              LEA.L ER1,A0
+00001152                           183  FIN_JOP:
+00001152  4E75                     184              RTS
+00001154                           185              
+00001154                           186              
+00001154                           187  CONSTANTE:
+00001154                           188              
+00001154  3038 101E                189              MOVE.W EIR,D0
+00001158                           190              
+00001158  C07C 03FC                191              AND.W #$03FC,D0
+0000115C  E448                     192              LSR.W #2,D0
+0000115E                           193              
+0000115E  4E75                     194              RTS
+00001160                           195              
+00001160                           196              
+00001160                           197  DIRECCION_MEM:
+00001160                           198              
+00001160  3038 101E                199              MOVE.W EIR,D0
+00001164                           200              
+00001164  C07C 00FF                201              AND.W #$00FF,D0
+00001168                           202              
+00001168  4E75                     203              RTS
+0000116A                           204              
+0000116A                           205              
+0000116A                           206  DIRECCION_JMP:
+0000116A                           207              
+0000116A  3038 101E                208              MOVE.W EIR,D0
+0000116E                           209              
+0000116E  C07C 0FF0                210              AND.W #$0FF0,D0
+00001172  E848                     211              LSR.W #4,D0
+00001174                           212              
+00001174  4E75                     213              RTS         
+00001176                           214              
+00001176                           215  
+00001176                           216              
+00001176                           217              
+00001176                           218          
+00001176                           219      ;--- FSUBR: FIN SUBRUTINAS
+00001176                           220      
+00001176                           221      
+00001176                           222  
+00001176                           223      ;--- IDECOD: INICIO DECOD
+00001176                           224          ;*** Tras la etiqueta DECOD, debeis implementar la subrutina de 
+00001176                           225          ;*** decodificacion, que debera ser de libreria, siguiendo la interfaz
+00001176                           226          ;*** especificada en el enunciado
+00001176                           227  DECOD:
+00001176                           228              ; ESCRIBID VUESTRO CODIGO AQUI
+00001176                           229              
+00001176  3F00                     230              MOVE.W D0,-(SP)
+00001178  302F 0006                231              MOVE.W 6(SP),D0
+0000117C  0800 000F                232              BTST #15,D0             ;X     
+00001180  6600 009A                233              BNE ETQ1
+00001184  0800 000E                234              BTST #14,D0             ;0X
+00001188  6600 001C                235              BNE ETQ2
+0000118C  0800 000D                236              BTST #13,D0             ;00X
+00001190  6600 00B8                237              BNE ETQ3
+00001194  0800 000C                238              BTST #12,D0             ;000X
+00001198  6600 00BA                239              BNE ETQ4
+0000119C  3F7C 0009 0008           240              MOVE.W #9,8(SP)         ;0000
+000011A2  6000 00B6                241              BRA FDECOD
+000011A6                           242  ETQ2:
+000011A6  0800 000D                243              BTST #13,D0             ;01X
+000011AA  6600 0054                244              BNE ETQ7
+000011AE  0800 000C                245              BTST #12,D0             ;010X
+000011B2  6600 0042                246              BNE ETQ9
+000011B6  0800 000B                247              BTST #11,D0             ;0100X
+000011BA  6600 001E                248              BNE ETQ10
+000011BE  0800 000A                249              BTST #10,D0             ;01000X
+000011C2  6600 000C                250              BNE ETQ12
+000011C6  3F7C 0002 0008           251              MOVE.W #2,8(SP)         ;010000
+000011CC  6000 008C                252              BRA FDECOD
+000011D0                           253  ETQ12:
+000011D0  3F7C 0003 0008           254              MOVE.W #3,8(SP)         ;010001
+000011D6  6000 0082                255              BRA FDECOD
+000011DA                           256  ETQ10:
+000011DA  0800 000A                257              BTST #10,D0             ;01001X
+000011DE  6600 000C                258              BNE ETQ11
+000011E2  3F7C 0004 0008           259              MOVE.W #4,8(SP)         ;010010
+000011E8  6000 0070                260              BRA FDECOD
+000011EC                           261  ETQ11:
+000011EC  3F7C 0005 0008           262              MOVE.W #5,8(SP)         ;010011
+000011F2  6000 0066                263              BRA FDECOD
+000011F6                           264  ETQ9:
+000011F6  3F7C 0006 0008           265              MOVE.W #6,8(SP)         ;0101
+000011FC  6000 005C                266              BRA FDECOD
+00001200                           267  ETQ7:
+00001200  0800 000C                268              BTST #12,D0             ;011X
+00001204  6600 000C                269              BNE ETQ8
+00001208  3F7C 0007 0008           270              MOVE.W #7,8(SP)         ;0110
+0000120E  6000 004A                271              BRA FDECOD
+00001212                           272  ETQ8:
+00001212  3F7C 0008 0008           273              MOVE.W #8,8(SP)         ;0111
+00001218  6000 0040                274              BRA FDECOD            
+0000121C                           275  ETQ1:
+0000121C  0800 000E                276              BTST #14,D0             ;1X
+00001220  6600 001E                277              BNE ETQ5
+00001224  0800 000D                278              BTST #13,D0             ;10X
+00001228  6600 000C                279              BNE ETQ6
+0000122C  3F7C 0000 0008           280              MOVE.W #0,8(SP)         ;100
+00001232  6000 0026                281              BRA FDECOD
+00001236                           282  ETQ6:
+00001236  3F7C 0001 0008           283              MOVE.W #1,8(SP)         ;101
+0000123C  6000 001C                284              BRA FDECOD
+00001240                           285  ETQ5:
+00001240  3F7C 000C 0008           286              MOVE.W #12,8(SP)        ;11
+00001246  6000 0012                287              BRA FDECOD
+0000124A                           288  ETQ3:
+0000124A  3F7C 000B 0008           289              MOVE.W #11,8(SP)        ;0010
+00001250  6000 0008                290              BRA FDECOD
+00001254                           291  ETQ4:
+00001254  3F7C 000A 0008           292              MOVE.W #10,8(SP)        ;0001
+0000125A                           293  FDECOD:
+0000125A  301F                     294              MOVE.W (SP)+,D0
+0000125C  4E75                     295              RTS
+0000125E                           296  
+0000125E                           297      ;--- FDECOD: FIN DECOD
+0000125E                           298      END    START
 
 No errors detected
 No warnings generated
@@ -198,7 +308,10 @@ No warnings generated
 SYMBOL TABLE INFORMATION
 Symbol-name         Value
 -------------------------
-DECOD               10AC
+CONSTANTE           1154
+DECOD               1176
+DIRECCION_JMP       116A
+DIRECCION_MEM       1160
 EADD                10AA
 EADQ                10AA
 ECMP                10AA
@@ -219,20 +332,36 @@ ESET                10AA
 ESR                 102A
 ESTO                10AA
 ESUB                10AA
-ETQ1                1152
-ETQ10               1110
-ETQ11               1122
-ETQ12               1106
-ETQ2                10DC
-ETQ3                1180
-ETQ4                118A
-ETQ5                1176
-ETQ6                116C
-ETQ7                1136
-ETQ8                1148
-ETQ9                112C
+ETQ1                121C
+ETQ10               11DA
+ETQ11               11EC
+ETQ12               11D0
+ETQ2                11A6
+ETQ3                124A
+ETQ4                1254
+ETQ5                1240
+ETQ6                1236
+ETQ7                1200
+ETQ8                1212
+ETQ9                11F6
 ETRA                10AA
-FDECOD              1190
+FDECOD              125A
 FETCH               1030
+FIN_A               10E4
+FIN_B               111E
+FIN_JMEM            1138
+FIN_JOP             1152
 JMPLIST             105C
+RA1                 10C8
+RA2                 10D0
+RA3                 10E0
+RB1                 1102
+RB2                 110A
+RB3                 111A
+REGISTRO_A          10AC
+REGISTRO_B          10E6
+REGISTRO_JMEM       1120
+REGISTRO_JOP        113A
+RJMEM1              1134
+RJOP1               114E
 START               102C

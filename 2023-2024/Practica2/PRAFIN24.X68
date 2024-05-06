@@ -112,7 +112,107 @@ EHLT:
             ;Obtener "m" dos opciones
             ;Obtener "j" dos opciones
 	        
+REGISTRO_A:
 	        
+	        MOVE.W EIR,D0
+	        BTST #5,D0
+	        BNE RA2
+	        BTST #4,D0
+	        BNE RA1
+	        LEA.L ER0,A0
+            BRA FIN_A
+RA1:
+            LEA.L ER1,A0
+            BRA FIN_A
+RA2:
+            BTST #4,D0
+	        BNE RA3
+	        LEA.L ER2,A0
+	        BRA FIN_A
+RA3:
+	        LEA.L ER3,A0
+FIN_A:
+	        RTS
+            	        
+	        
+REGISTRO_B:
+	        	        
+	        MOVE.W EIR,D0
+	        BTST #5,D0
+	        BNE RB2
+	        BTST #4,D0
+	        BNE RB1
+	        LEA.L ER0,A0
+            BRA FIN_B
+RB1:
+            LEA.L ER1,A0
+            BRA FIN_B
+RB2:
+            BTST #4,D0
+	        BNE RB3
+	        LEA.L ER2,A0
+	        BRA FIN_B
+RB3:
+	        LEA.L ER3,A0
+FIN_B:
+	        RTS
+	        
+	        
+REGISTRO_JMEM:
+	        
+	        MOVE.W EIR,D0
+	        BTST #11,D0
+	        BNE RJMEM1
+	        LEA.L ER0,A0
+	        BRA FIN_JMEM
+RJMEM1:
+	        LEA.L ER1,A0
+FIN_JMEM:
+	        RTS
+	        
+	        
+REGISTRO_JOP:
+	        
+	        MOVE.W EIR,D0
+	        BTST #11,D0
+	        BNE RJOP1
+	        LEA.L ER0,A0
+	        BRA FIN_JOP
+RJOP1:
+	        LEA.L ER1,A0
+FIN_JOP:
+	        RTS
+	        
+	        
+CONSTANTE:
+            
+            MOVE.W EIR,D0
+            
+            AND.W #$03FC,D0
+	        LSR.W #2,D0
+	        
+	        RTS
+	        
+	        
+DIRECCION_MEM:
+            
+            MOVE.W EIR,D0
+            
+            AND.W #$00FF,D0
+	        
+	        RTS
+            
+            
+DIRECCION_JMP:
+            
+            MOVE.W EIR,D0
+            
+            AND.W #$0FF0,D0
+	        LSR.W #4,D0
+	        
+	        RTS	        
+	        
+
 	        
 	        
         
@@ -199,6 +299,7 @@ FDECOD:
     
     
     
+
 *~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~
