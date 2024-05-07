@@ -125,7 +125,10 @@ ESET:
         
 EADQ:
         
-        
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Rb
+        ;SALTAR SUBRUTINA OBTENER c
+        ;EXTENSION DE SIGNO DE c (EXT)
+        ;SUMAR 
         
         BRA FETCH
         
@@ -147,7 +150,7 @@ EJMZ:
         
 EJMN:
         
-        MOVE.W ERS,D0
+        MOVE.W ESR,D0
         BTST.L #1,D0
         BEQ FETCH
         ;SALTAR SUBRUTINA OBTENER m
@@ -284,7 +287,33 @@ DIRECCION_JMP:
 	        
 	        RTS	        
 	        
-
+	        
+OBTENCION_FLAGS:
+            BTST #0,D0
+            BNE SET_C
+            BCLR #0,D1
+            BRA OBTENCION_FLAGSZN
+SET_C:
+            BSET #0,D1 
+OBTENCION_FLAGSZN:
+	        BTST #2,D6
+            BNE SET_Z
+            BCLR #2,D7
+            BRA FN
+SET_Z:
+            BSET #2,D7
+FN:
+            BTST #3,D6
+            BNE SET_N
+            BCLR #1,D7
+            BRA FIN_OBTENCION_FLAGS
+SET_N:
+            BSET #1,D7
+FIN_OBTENCION_FLAGS:
+            MOVE.W D7,ESR
+            RTS
+	        
+	        
 	        
 	        
         
