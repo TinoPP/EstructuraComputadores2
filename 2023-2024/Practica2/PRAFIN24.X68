@@ -82,20 +82,92 @@ JMPLIST:
 	
 	; ESCRIBID EN CADA ETIQUETA LA FASE DE EJECUCION DE CADA INSTRUCCION
 ESTO:
+        
+        
+        
+        BRA FETCH
+        
 ELOA:
+        
+        
+        
+        BRA FETCH
+        
 ECMP:
+        
+        
+        
+        BRA FETCH
+        
 EADD:
+        
+        
+        
+        BRA FETCH
+        
 ESUB:
+        
+        
+        
+        BRA FETCH
+        
 ENOR:
+        
+        
+        
+        BRA FETCH
+        
 ESET:
+        
+        
+        
+        BRA FETCH
+        
 EADQ:
+        
+        
+        
+        BRA FETCH
+        
 ETRA:
+        
+        
+        
+        BRA FETCH
+        
 EJMZ:
+        
+        MOVE.W ESR,D0
+        BTST.L #2,D0
+        BEQ FETCH
+        ;SALTAR SUBRUTINA OBTENER m
+        ;METER m EN EPC
+        
+        BRA FETCH
+        
 EJMN:
+        
+        MOVE.W ERS,D0
+        BTST.L #1,D0
+        BEQ FETCH
+        ;SALTAR SUBRUTINA OBTENER m
+        ;METER m EN EPC
+        
+        BRA FETCH
+        
 EJMI:
+        
+        ;SALTAR SUBRUTINA OBTENER m
+        ;METER m EN EPC
+        
+        BRA FETCH
+        
 EHLT:
+        
+        SIMHALT
 
         BRA FETCH
+        
     ;--- FEXEC: FIN EJECUCION
     
     
