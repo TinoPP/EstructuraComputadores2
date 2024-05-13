@@ -1,6 +1,7 @@
 *-----------------------------------------------------------
 * Title      : PRAFIN24
 * Written by : Constantino Perez Palacios
+*              Iván Moreno De la Bandera
 *              Ivan 
 * Date       : 26/05/2024
 * Description: Emulador de la SUIBC
@@ -181,11 +182,11 @@ EHLT:
 
 	        ; ESCRIBID VUESTRO CODIGO AQUI
 	        
-            ;Obtener "a"
-            ;Obtener "b"
-            ;Obtener "c"
-            ;Obtener "m" dos opciones
-            ;Obtener "j" dos opciones
+            ;Obtener "a" D3
+            ;Obtener "b" D4
+            ;Obtener "c" D5
+            ;Obtener "m" dos opciones D5
+            ;Obtener "j" dos opciones D4
 	        
 REGISTRO_A:
 	        
@@ -288,28 +289,28 @@ DIRECCION_JMP:
 	        RTS	        
 	        
 	        
-OBTENCION_FLAGS:
-            BTST #0,D0
-            BNE SET_C
-            BCLR #0,D1
-            BRA OBTENCION_FLAGSZN
-SET_C:
-            BSET #0,D1 
-OBTENCION_FLAGSZN:
+ACT_FLAGS_OP:
+            BTST #0,D6
+            BNE SET_C_OP
+            BCLR #0,D7
+            BRA ACT_FLAGSZN_OP
+SET_C_OP:
+            BSET #0,D7 
+ACT_FLAGSZN_OP:
 	        BTST #2,D6
-            BNE SET_Z
+            BNE SET_Z_OP
             BCLR #2,D7
-            BRA FN
-SET_Z:
+            BRA FN_OP
+SET_Z_OP:
             BSET #2,D7
-FN:
+FN_OP:
             BTST #3,D6
-            BNE SET_N
+            BNE SET_N_OP
             BCLR #1,D7
-            BRA FIN_OBTENCION_FLAGS
-SET_N:
+            BRA FIN_ACT_FLAGS_OP
+SET_N_OP:
             BSET #1,D7
-FIN_OBTENCION_FLAGS:
+FIN_ACT_FLAGS_OP:
             MOVE.W D7,ESR
             RTS
 	        
@@ -400,6 +401,7 @@ FDECOD:
     
     
     
+
 
 *~Font name~Courier New~
 *~Font size~10~
