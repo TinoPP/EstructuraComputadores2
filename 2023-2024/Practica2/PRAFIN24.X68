@@ -182,80 +182,80 @@ EHLT:
 
 	        ; ESCRIBID VUESTRO CODIGO AQUI
 	        
-            ;Obtener "a" D3
-            ;Obtener "b" D4
-            ;Obtener "c" D5
-            ;Obtener "m" dos opciones D5
-            ;Obtener "j" dos opciones D4
+            ;Obtener "a" A4
+            ;Obtener "b" A5
+            ;Obtener "c" A6
+            ;Obtener "m" dos opciones A6
+            ;Obtener "j" dos opciones A5
 	        
 REGISTRO_A:
 	        
-	        MOVE.W EIR,D0
-	        BTST #5,D0
+	        MOVE.W EIR,D6
+	        BTST #5,D6
 	        BNE RA2
-	        BTST #4,D0
+	        BTST #4,D6
 	        BNE RA1
-	        LEA.L ER0,A0
+	        LEA.L ER0,A4
             BRA FIN_A
 RA1:
-            LEA.L ER1,A0
+            LEA.L ER1,A4
             BRA FIN_A
 RA2:
             BTST #4,D0
 	        BNE RA3
-	        LEA.L ER2,A0
+	        LEA.L ER2,A4
 	        BRA FIN_A
 RA3:
-	        LEA.L ER3,A0
+	        LEA.L ER3,A4
 FIN_A:
 	        RTS
             	        
 	        
 REGISTRO_B:
 	        	        
-	        MOVE.W EIR,D0
-	        BTST #5,D0
+	        MOVE.W EIR,D6
+	        BTST #5,D6
 	        BNE RB2
-	        BTST #4,D0
+	        BTST #4,D6
 	        BNE RB1
-	        LEA.L ER0,A0
+	        LEA.L ER0,A5
             BRA FIN_B
 RB1:
-            LEA.L ER1,A0
+            LEA.L ER1,A5
             BRA FIN_B
 RB2:
-            BTST #4,D0
+            BTST #4,D6
 	        BNE RB3
-	        LEA.L ER2,A0
+	        LEA.L ER2,A5
 	        BRA FIN_B
 RB3:
-	        LEA.L ER3,A0
+	        LEA.L ER3,A5
 FIN_B:
 	        RTS
 	        
 	        
 REGISTRO_JMEM:
 	        
-	        MOVE.W EIR,D0
-	        BTST #11,D0
+	        MOVE.W EIR,D6
+	        BTST #11,D6
 	        BNE RJMEM1
-	        LEA.L ER0,A0
+	        LEA.L ER0,A5
 	        BRA FIN_JMEM
 RJMEM1:
-	        LEA.L ER1,A0
+	        LEA.L ER1,A5
 FIN_JMEM:
 	        RTS
 	        
 	        
 REGISTRO_JOP:
 	        
-	        MOVE.W EIR,D0
+	        MOVE.W EIR,D6
 	        BTST #11,D0
 	        BNE RJOP1
-	        LEA.L ER0,A0
+	        LEA.L ER0,A5
 	        BRA FIN_JOP
 RJOP1:
-	        LEA.L ER1,A0
+	        LEA.L ER1,A5
 FIN_JOP:
 	        RTS
 	        
