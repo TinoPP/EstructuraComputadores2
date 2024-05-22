@@ -84,19 +84,39 @@ JMPLIST:
 	; ESCRIBID EN CADA ETIQUETA LA FASE DE EJECUCION DE CADA INSTRUCCION
 ESTO:
         
+        JSR DIRECCION_MEM
+        MULU.W #2,D6
+        MOVE.W D6,A1
         
+        JSR REGISTRO_JMEM
+        MOVE.W (A5),D1
+        MOVE.W D1,EMEM(A1)
         
         BRA FETCH
         
 ELOA:
         
+        JSR REGISTRO_JMEM
         
+        JSR DIRECCION_MEM
+        MULU.W #2,D6
+        MOVE.W D6,A1
+        MOVE.W EMEM(A1),(A5)
+        
+        JSR ACT_FLAGSZN_OP
         
         BRA FETCH
         
 ECMP:
         
+        JSR REGISTRO_JMEM
+        MOVE.W (A5),D1
         
+        JSR REGISTRO_A
+        MOVE.W (A4),D2
+        
+        SUB.W D1,D2
+        JSR ACT_FLAGS_OP
         
         BRA FETCH
         
@@ -107,6 +127,15 @@ EADD:
         BRA FETCH
         
 ESUB:
+        
+        JSR REGISTRO_JMEM
+        MOVE.W (A5),D1
+        
+        JSR REGISTRO_A
+        MOVE.W (A4),D2
+        
+        SUB.W D1,D2
+        JSR ACT_FLAGS_OP
         
         
         
@@ -185,7 +214,7 @@ EHLT:
             ;Obtener "a" A4
             ;Obtener "b" A5
             ;Obtener "c" A6
-            ;Obtener "m" dos opciones A6
+            ;Obtener "m" dos opciones D6
             ;Obtener "j" dos opciones A5
 	        
 REGISTRO_A:
@@ -272,18 +301,18 @@ CONSTANTE:
 	        
 DIRECCION_MEM:
             
-            MOVE.W EIR,D0
+            MOVE.W EIR,D5
             
-            AND.W #$00FF,D0
+            AND.W #$00FF,D5
 	        
 	        RTS
             
             
 DIRECCION_JMP:
             
-            MOVE.W EIR,D0
+            MOVE.W EIR,D5
             
-            AND.W #$0FF0,D0
+            AND.W #$0FF0,D5
 	        LSR.W #4,D0
 	        
 	        RTS	        
@@ -295,7 +324,7 @@ ACT_FLAGS_OP:
             BCLR #0,D7
             BRA ACT_FLAGSZN_OP
 SET_C_OP:
-            BSET #0,D7 
+            BSET #0,D7
 ACT_FLAGSZN_OP:
 	        BTST #2,D6
             BNE SET_Z_OP
@@ -401,6 +430,7 @@ FDECOD:
     
     
     
+
 
 
 *~Font name~Courier New~
