@@ -1,12 +1,12 @@
+
 *-----------------------------------------------------------
 * Title      : PRAFIN24
 * Written by : Constantino Perez Palacios
-*              Iván Moreno De la Bandera
-*              Ivan 
-* Date       : 26/05/2024
+*              Ivan Moreno De la Bandera
+* Date       : 27/05/2024
 * Description: Emulador de la SUIBC
 *-----------------------------------------------------------
-        ORG $1000
+    ORG $1000
 EMEM:   DC.W $A00C,$00A0,$7002,$5000,$A80D,$00A0,$4420,$63FD
         DC.W $00A0,$2060,$800E,$C000,$0003,$0004,$0000
 EIR:    DC.W 0 ;eregistro de instruccion
@@ -29,9 +29,10 @@ FETCH:
 	        ; ESCRIBID VUESTRO CODIGO AQUI	    
 	        
 	        MOVE.W EPC,D0
+	        ADD.W D0,D0
 	        MOVEA.W D0,A0
 	        MOVE.W EMEM(A0),EIR
-	        ADDQ.W #2,EPC
+	        ADDQ.W #1,EPC
         
     ;--- FFETCH: FIN FETCH
     
@@ -47,7 +48,7 @@ FETCH:
     	    MOVE.W #0,-(SP)
             MOVE.W EIR,-(SP)
     	    JSR DECOD
-    	    ADDQ.W #2,SP
+    	    ADDQ.W #2,SP    
     	    MOVE.W (SP)+,D1
         
     ;--- FBRDECOD: FIN SALTO A DECOD
@@ -84,57 +85,99 @@ JMPLIST:
 	; ESCRIBID EN CADA ETIQUETA LA FASE DE EJECUCION DE CADA INSTRUCCION
 ESTO:
         
+        ;OBTENEMOS POSICION DE MEMORIA DE M
         JSR DIRECCION_MEM
-        MULU.W #2,D6
-        MOVE.W D6,A1
+        MULU.W #2,D5
+        MOVE.W D5,A1
         
+        ;OBTENEMOS POSICION DE MEMORIA DE Rj
         JSR REGISTRO_JMEM
+        ;GUARDAMOS LO QUE HAY EN M EN LA POSICION DE Rj
         MOVE.W (A5),D1
         MOVE.W D1,EMEM(A1)
         
         BRA FETCH
         
 ELOA:
-        
+        ;OBTENEMOS POSICION DE MEMORIA DE Rj
         JSR REGISTRO_JMEM
         
+        ;OBTENEMOS POSICION DE MEMORIA DE M
         JSR DIRECCION_MEM
-        MULU.W #2,D6
-        MOVE.W D6,A1
-        MOVE.W EMEM(A1),(A5)
-        
+        ;GUARDAMOS LO QUE HAY EN Rj EN LA POSICION DE M
+        MULU.W #2,D5
+        MOVE.W D5,A1
+        MOVE.W EMEM(A1),D3
+        MOVE.W D3,(A5)
+        ;PREPARACION ACTUALIZACION DE FLAGS
+        MOVE.W SR,D6
+        MOVE.W ESR,D7
+        ;ACTUALIZACION DE FLAGS
         JSR ACT_FLAGSZN_OP
         
         BRA FETCH
         
 ECMP:
-        
-        JSR REGISTRO_JMEM
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Rj
+        JSR REGISTRO_JOP
         MOVE.W (A5),D1
-        
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Ra
         JSR REGISTRO_A
         MOVE.W (A4),D2
+        ;NEGAMOS EL REGISTRO Ra
+        NEG D2
+        ;LE SUMAMOS 1 A Ra
+        ;ADDQ.W #1,D2
+        ;SUMAMOS Rj Y Ra(A'+1) (EQUIVALE A RESTAR Rj Y Ra)
+        ADD.W D1,D2
+        ;PREPARACION ACTUALIZACION DE FLAGS
+        MOVE.W SR,D6
+        MOVE.W ESR,D7
         
-        SUB.W D1,D2
+        ;ACTUALIZACION DE FLAGS
         JSR ACT_FLAGS_OP
         
         BRA FETCH
         
-EADD:
+EADD:   
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Ra
+        JSR REGISTRO_A
+        MOVE.W (A4),D2
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Rj
+        JSR REGISTRO_JOP
+        MOVE.W (A5),D3
         
-        
+        ;SUMAMOS Rj Y Ra
+        ADD.W D3,D2
+        ;PREPARACION ACTUALIZACION DE FLAGS
+        MOVE.W SR,D6
+        MOVE.W ESR,D7
+        ;MOVEMOS EL RESULTADO DE LA SUMA A Rj
+        MOVE.W D2,(A5)
+        ;ACTUALIZACION DE FLAGS
+        JSR ACT_FLAGS_OP
         
         BRA FETCH
         
 ESUB:
-        
-        JSR REGISTRO_JMEM
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Rj
+        JSR REGISTRO_JOP
         MOVE.W (A5),D1
-        
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Ra
         JSR REGISTRO_A
         MOVE.W (A4),D2
-        
-        SUB.W D1,D2
+        ;NEGAMOS EL REGISTRO Ra
+        NEG D2
+        ;LE SUMAMOS 1 A Ra
+        ;ADDQ.W #1,D2
+        ;SUMAMOS Rj Y Ra(A'+1) (EQUIVALE A RESTAR Rj Y Ra)
+        ADD.W D1,D2
+        ;PREPARACION ACTUALIZACION DE FLAGS
+        MOVE.W SR,D6
+        MOVE.W ESR,D7
+        ;MOVEMOS EL RESULTADO A Rj
+        MOVE.W D2,(A5)
+        ;ACTUALIZACION DE FLAGS
         JSR ACT_FLAGS_OP
         
         
@@ -142,13 +185,46 @@ ESUB:
         BRA FETCH
         
 ENOR:
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Ra
+        JSR REGISTRO_A
+        MOVE.W (A4),D1
         
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Rj
+        JSR REGISTRO_JOP
+        MOVE.W (A5),D2
+        
+        ;HACEMOS UN OR DE Ra Y Rj Y NEGAMOS EL RESULTADO (EQUIVALE A HAVER NOR)
+        OR.W D1,D2
+        NOT D2
+        
+        ;PREPARACION ACTUALIZACION DE FLAGS
+        MOVE.W SR,D6
+        MOVE.W ESR,D7
+        MOVE.W D2,(A5)
+        
+        ;ACTUALIZACION DE FLAGS
+        JSR ACT_FLAGSZN_OP
         
         
         BRA FETCH
         
 ESET:
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Rb
+        JSR REGISTRO_B     
+    
+        ;SALTAR SUBRUTINA OBTENER EL VALOR c
+        JSR CONSTANTE
         
+        ;EXTENSION DE SIGNO DE c Y LO GUARDAMOS EN Rb
+        EXT.W D4
+        MOVE.W D4,(A5)
+        
+        ;PREPARACION ACTUALIZACION DE FLAGS
+        MOVE.W SR,D6
+        MOVE.W ESR,D7
+        
+        ;ACTUALIZACION DE FLAGS
+        JSR ACT_FLAGSZN_OP
         
         
         BRA FETCH
@@ -156,46 +232,75 @@ ESET:
 EADQ:
         
         ;SALTAR SUBRUTINA OBTENER REGISTRO Rb
+        JSR REGISTRO_B
         ;SALTAR SUBRUTINA OBTENER c
+        JSR CONSTANTE
+        
+        ;EXTENSION DE SIGNO DE c Y LO SUMAMOS A Rb Y GUARDAMOS EN Rb
+        EXT.W D4
+        ADD D4,(A5)
+        
+        ;PREPARACION ACTUALIZACION DE FLAGS
+        MOVE.W SR,D6
+        MOVE.W ESR,D7
+        
+        ;ACTUALIZACION DE FLAGS
+        JSR ACT_FLAGS_OP
         ;EXTENSION DE SIGNO DE c (EXT)
         ;SUMAR 
         
         BRA FETCH
         
 ETRA:
+
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Ra
+        JSR REGISTRO_A
+        MOVE.W (A4),D1
         
+        ;SALTAR SUBRUTINA OBTENER REGISTRO Rb        
+        JSR REGISTRO_B
+        
+        ;COPIAMOS LO QUE HAY EN Ra EN Rb
+        MOVE.W D1,(A5)
+        
+        ;PREPARACION ACTUALIZACION DE FLAGS
+        MOVE.W SR,D6
+        MOVE.W ESR,D7
+        
+        ;ACTUALIZACION DE FLAGS
+        JSR ACT_FLAGSZN_OP
         
         
         BRA FETCH
         
-EJMZ:
+EJMZ:   ;INSTRUCCION QUE REALIZA UN SALTO SI EL FLAG Z ESTA ACTIVADO
         
         MOVE.W ESR,D0
         BTST.L #2,D0
         BEQ FETCH
-        ;SALTAR SUBRUTINA OBTENER m
-        ;METER m EN EPC
-        
+        JSR DIRECCION_JMP
+        MOVE.W D5,EPC
+                
         BRA FETCH
         
-EJMN:
+EJMN:   ;INSTRUCCION QUE REALIZA UN SALTO SI EL FLAG N ESTA ACTIVADO
         
         MOVE.W ESR,D0
         BTST.L #1,D0
         BEQ FETCH
-        ;SALTAR SUBRUTINA OBTENER m
-        ;METER m EN EPC
+        JSR DIRECCION_JMP
+        MOVE.W D5,EPC
+                
+        BRA FETCH
+        
+EJMI:   ;INSTRUCCION QUE REALIZA UN SALTO INCONDICIONAL
+        
+        JSR DIRECCION_JMP
+        MOVE.W D5,EPC
         
         BRA FETCH
         
-EJMI:
-        
-        ;SALTAR SUBRUTINA OBTENER m
-        ;METER m EN EPC
-        
-        BRA FETCH
-        
-EHLT:
+EHLT:   ;INSTRUCCION QUE FINALIZA EL PROGRAMA
         
         SIMHALT
 
@@ -213,112 +318,112 @@ EHLT:
 	        
             ;Obtener "a" A4
             ;Obtener "b" A5
-            ;Obtener "c" A6
-            ;Obtener "m" dos opciones D6
+            ;Obtener "c" D4
+            ;Obtener "m" dos opciones D5
             ;Obtener "j" dos opciones A5
 	        
-REGISTRO_A:
+REGISTRO_A:                         ;Obtencion del registro Ra
 	        
 	        MOVE.W EIR,D6
 	        BTST #5,D6
 	        BNE RA2
 	        BTST #4,D6
 	        BNE RA1
-	        LEA.L ER0,A4
+	        LEA.L ER0,A4            ;ER0
             BRA FIN_A
 RA1:
-            LEA.L ER1,A4
+            LEA.L ER1,A4            ;ER1
             BRA FIN_A
 RA2:
-            BTST #4,D0
+            BTST #4,D6
 	        BNE RA3
-	        LEA.L ER2,A4
+	        LEA.L ER2,A4            ;ER2
 	        BRA FIN_A
 RA3:
-	        LEA.L ER3,A4
+	        LEA.L ER3,A4            ;ER3
 FIN_A:
 	        RTS
             	        
 	        
-REGISTRO_B:
-	        	        
+REGISTRO_B:                         ;Obtencion del registro Rb
+	        
 	        MOVE.W EIR,D6
-	        BTST #5,D6
+	        BTST #1,D6
 	        BNE RB2
-	        BTST #4,D6
+	        BTST #0,D6
 	        BNE RB1
-	        LEA.L ER0,A5
+	        LEA.L ER0,A5            ;ER0
             BRA FIN_B
 RB1:
-            LEA.L ER1,A5
+            LEA.L ER1,A5            ;ER1
             BRA FIN_B
 RB2:
-            BTST #4,D6
+            BTST #0,D6
 	        BNE RB3
-	        LEA.L ER2,A5
+	        LEA.L ER2,A5            ;ER2
 	        BRA FIN_B
 RB3:
-	        LEA.L ER3,A5
+	        LEA.L ER3,A5            ;ER3
 FIN_B:
 	        RTS
 	        
 	        
-REGISTRO_JMEM:
-	        
+REGISTRO_JMEM:                      ;obtencion del registro Rj
+	                                ;para las instrucciones con la memoria
 	        MOVE.W EIR,D6
 	        BTST #11,D6
 	        BNE RJMEM1
-	        LEA.L ER0,A5
+	        LEA.L ER0,A5            ;ER0
 	        BRA FIN_JMEM
 RJMEM1:
-	        LEA.L ER1,A5
+	        LEA.L ER1,A5            ;ER1
 FIN_JMEM:
 	        RTS
 	        
 	        
-REGISTRO_JOP:
-	        
+REGISTRO_JOP:                       ;Obrencion del registro Rj
+	                                ;para las instrucciones de operaciones
 	        MOVE.W EIR,D6
-	        BTST #11,D0
+	        BTST #6,D6
 	        BNE RJOP1
-	        LEA.L ER0,A5
+	        LEA.L ER0,A5            ;ER0
 	        BRA FIN_JOP
 RJOP1:
-	        LEA.L ER1,A5
+	        LEA.L ER1,A5            ;ER1
 FIN_JOP:
 	        RTS
 	        
 	        
-CONSTANTE:
+CONSTANTE:                          ;Obtencion de la constante 
             
-            MOVE.W EIR,D0
+            MOVE.W EIR,D4
             
-            AND.W #$03FC,D0
-	        LSR.W #2,D0
+            AND.W #$03FC,D4         ;Mascara para el obtener los bits de c
+	        LSR.W #2,D4             ;Desplazamiento hacia la derecha de c
 	        
 	        RTS
 	        
 	        
-DIRECCION_MEM:
-            
+DIRECCION_MEM:                      ;Obtencion de la posicion de memoria
+                                    ;para las intrucciones transferencia
             MOVE.W EIR,D5
             
-            AND.W #$00FF,D5
+            AND.W #$00FF,D5         ;Mascara para el obtener los bits de m
 	        
 	        RTS
             
             
-DIRECCION_JMP:
-            
+DIRECCION_JMP:                      ;Obtencion de la posicion de memoria
+                                    ;para las intrucciones de salto
             MOVE.W EIR,D5
             
-            AND.W #$0FF0,D5
-	        LSR.W #4,D0
+            AND.W #$0FF0,D5         ;Mascara para el obtener los bits de m
+	        LSR.W #4,D5             ;Desplazamiento hacia la derecha de m
 	        
 	        RTS	        
 	        
 	        
-ACT_FLAGS_OP:
+ACT_FLAGS_OP:                       ;Actualizacion de los flags
             BTST #0,D6
             BNE SET_C_OP
             BCLR #0,D7
@@ -427,9 +532,8 @@ FDECOD:
 
     ;--- FDECOD: FIN DECOD
     END    START
-    
-    
-    
+
+
 
 
 
